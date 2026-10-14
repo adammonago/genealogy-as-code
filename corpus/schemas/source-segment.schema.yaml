@@ -1,0 +1,37 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://genealogy-as-code.local/hkf/schemas/source-segment.schema.yaml
+title: HKF SourceSegment
+description: Independently addressable evidence location shared by extractions or claims.
+type: object
+additionalProperties: true
+required:
+  - hkf_version
+  - kind
+  - id
+  - locator
+  - generated
+properties:
+  hkf_version:
+    type: string
+    const: "0.1"
+  kind:
+    type: string
+    const: SourceSegment
+  id:
+    type: string
+    pattern: "^segment:.+"
+  locator:
+    $ref: evidence-locator.schema.yaml
+  generated:
+    $ref: "#/$defs/generated"
+$defs:
+  generated:
+    type: object
+    additionalProperties: true
+    required: [by]
+    properties:
+      by:
+        type: string
+        minLength: 1
+      at:
+        type: string

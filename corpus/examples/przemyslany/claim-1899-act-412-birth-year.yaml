@@ -1,0 +1,30 @@
+hkf_version: "0.1"
+kind: Claim
+id: claim:przemyslany:1899:act-412:birth-year-a
+
+subject:
+  entity_ref: entityref:przemyslany:1899:act-412:person-1
+
+predicate: person.birth_date
+
+object:
+  temporal:
+    original: "1899"
+    earliest: "1899-01-01"
+    latest: "1899-12-31"
+    precision: year
+    qualifier: exact
+
+evidence:
+  - source_ref: /przemyslany/registers/births-1877-1904.md
+    selectors:
+      year: "1899"
+      act: "412"
+      image: "501"
+
+extraction_ref: extraction:przemyslany:1899:act-412:v1
+extraction_state: candidate
+
+generated:
+  by: hkf-extractor/0.1.0
+  at: "2026-08-11T10:01:35Z"

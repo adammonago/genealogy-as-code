@@ -1,0 +1,18 @@
+hkf_version: "0.1"
+hkf_namespace: gaac:przemyslany
+kind: SourceSegment
+id: segment:przemyslany:1899:act-412
+
+locator:
+  source_ref: /przemyslany/registers/births-1877-1904.md
+  selectors:
+    year: "1899"
+    act: "412"
+    image: "501"
+  notes: >
+    Fictionalized pilot segment based on documented water-damage issue B-001
+    (acts 412–417, 1899). Names and relationships below are illustrative only.
+
+generated:
+  by: process:hkf-pilot-import
+  at: "2026-08-11T10:00:00Z"

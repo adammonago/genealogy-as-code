@@ -1,0 +1,19 @@
+hkf_version: "0.1"
+kind: EntityReference
+id: entityref:przemyslany:1899:act-412:residence
+
+segment_ref: segment:przemyslany:1899:act-412
+entity_type: place
+
+mention: "Miasto"
+normalized_label: "miasto"
+
+resolution_state: unresolved
+resolution_note: >
+  Register uses Miasto ("the town") without further specification.
+  See przemyslany/enrichment/place-names.md#miasto-disambiguation.
+  Compatible with parked identity until geographic context is sufficient.
+
+generated:
+  by: hkf-extractor/0.1.0
+  at: "2026-08-11T10:01:20Z"

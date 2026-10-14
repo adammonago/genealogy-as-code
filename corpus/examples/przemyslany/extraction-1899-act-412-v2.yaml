@@ -1,0 +1,18 @@
+hkf_version: "0.1"
+kind: Extraction
+id: extraction:przemyslany:1899:act-412:v2
+
+segment_ref: segment:przemyslany:1899:act-412
+
+method: hybrid
+
+tool:
+  actor: hkf-extractor/0.1.1
+  model: example-model
+  model_revision: def456
+
+extraction_confidence: 0.84
+
+generated:
+  by: hkf-extractor/0.1.1
+  at: "2026-08-11T11:00:00Z"

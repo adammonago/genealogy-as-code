@@ -1,0 +1,91 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://genealogy-as-code.local/hkf/schemas/identity-assertion.schema.yaml
+title: HKF IdentityAssertion
+description: Explicit comparison between two entity references or entities.
+type: object
+additionalProperties: true
+required:
+  - hkf_version
+  - kind
+  - id
+  - left_ref
+  - right_ref
+  - decision
+  - resolution_state
+  - generated
+properties:
+  hkf_version:
+    type: string
+    const: "0.1"
+  kind:
+    type: string
+    const: IdentityAssertion
+  id:
+    type: string
+    pattern: "^identity:.+"
+  left_ref:
+    type: string
+    minLength: 1
+  right_ref:
+    type: string
+    minLength: 1
+  decision:
+    type: string
+    enum: [same, different, unresolved]
+  confidence:
+    type: string
+    enum: [not_assessed, low, medium, high]
+    description: HKF domain assessment. Not an OKF trust tier.
+  resolution_state:
+    type: string
+    enum: [proposed, reviewed, parked]
+  basis_claims:
+    type: array
+    items:
+      type: string
+      pattern: "^claim:.+"
+  rationale:
+    type: string
+  generated:
+    $ref: "#/$defs/generated"
+  verified:
+    $ref: "#/$defs/verified"
+  review_events:
+    type: array
+    items:
+      type: object
+      additionalProperties: true
+      required: [by, action]
+      properties:
+        id: { type: string }
+        by: { type: string }
+        at: { type: string }
+        action:
+          type: string
+          enum: [accept, reject, qualify, reopen]
+        note: { type: string }
+allOf:
+  - if:
+      properties:
+        resolution_state: { const: parked }
+      required: [resolution_state]
+    then:
+      properties:
+        decision: { const: unresolved }
+$defs:
+  generated:
+    type: object
+    additionalProperties: true
+    required: [by]
+    properties:
+      by: { type: string, minLength: 1 }
+      at: { type: string }
+  verified:
+    type: array
+    items:
+      type: object
+      additionalProperties: true
+      required: [by]
+      properties:
+        by: { type: string, minLength: 1 }
+        at: { type: string }

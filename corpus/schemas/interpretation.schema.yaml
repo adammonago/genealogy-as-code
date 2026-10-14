@@ -1,0 +1,75 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://genealogy-as-code.local/hkf/schemas/interpretation.schema.yaml
+title: HKF HistoricalInterpretation
+description: Synthesis of claims and identity decisions into a higher-level conclusion.
+type: object
+additionalProperties: true
+required:
+  - hkf_version
+  - kind
+  - id
+  - statement
+  - interpretation_state
+  - generated
+properties:
+  hkf_version:
+    type: string
+    const: "0.1"
+  kind:
+    type: string
+    const: HistoricalInterpretation
+  id:
+    type: string
+    pattern: "^interpretation:.+"
+  statement:
+    type: string
+    minLength: 1
+  about:
+    type: array
+    items:
+      type: string
+  supports:
+    type: array
+    items:
+      type: string
+      pattern: "^claim:.+"
+  challenges:
+    type: array
+    items:
+      type: string
+      pattern: "^claim:.+"
+  interpretation_state:
+    type: string
+    enum: [proposed, current, disputed, superseded, withdrawn]
+  superseded_by:
+    type: string
+    pattern: "^interpretation:.+"
+  supersedes:
+    type: array
+    items:
+      type: string
+      pattern: "^interpretation:.+"
+  review_state:
+    type: string
+    description: HKF extension (e.g. needs_review). MUST NOT replace OKF status.
+  generated:
+    $ref: "#/$defs/generated"
+  verified:
+    $ref: "#/$defs/verified"
+$defs:
+  generated:
+    type: object
+    additionalProperties: true
+    required: [by]
+    properties:
+      by: { type: string, minLength: 1 }
+      at: { type: string }
+  verified:
+    type: array
+    items:
+      type: object
+      additionalProperties: true
+      required: [by]
+      properties:
+        by: { type: string, minLength: 1 }
+        at: { type: string }

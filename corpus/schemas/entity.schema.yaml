@@ -1,0 +1,80 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://genealogy-as-code.local/hkf/schemas/entity.schema.yaml
+title: HKF Entity
+description: Fabric-level representation of a real or hypothesized thing.
+type: object
+additionalProperties: true
+required:
+  - hkf_version
+  - kind
+  - id
+  - entity_type
+  - generated
+properties:
+  hkf_version:
+    type: string
+    const: "0.1"
+  kind:
+    type: string
+    const: Entity
+  id:
+    type: string
+    pattern: "^entity:.+"
+  entity_type:
+    type: string
+    enum:
+      - person
+      - place
+      - organization
+      - event
+      - source
+      - record
+      - occupation
+      - jurisdiction
+      - family
+      - other
+  preferred_label:
+    type: string
+    description: Display convention. MUST NOT overwrite historically observed names.
+  names:
+    type: array
+    items:
+      type: object
+      additionalProperties: true
+      required: [value]
+      properties:
+        value: { type: string }
+        language: { type: string }
+  authority_refs:
+    type: array
+    items:
+      $ref: "#/$defs/authority_ref"
+  generated:
+    $ref: "#/$defs/generated"
+  verified:
+    $ref: "#/$defs/verified"
+$defs:
+  authority_ref:
+    type: object
+    additionalProperties: true
+    required: [scheme, id]
+    properties:
+      scheme: { type: string, minLength: 1 }
+      id: { type: ["string", "integer", "number"] }
+      resource: { type: string }
+  generated:
+    type: object
+    additionalProperties: true
+    required: [by]
+    properties:
+      by: { type: string, minLength: 1 }
+      at: { type: string }
+  verified:
+    type: array
+    items:
+      type: object
+      additionalProperties: true
+      required: [by]
+      properties:
+        by: { type: string, minLength: 1 }
+        at: { type: string }

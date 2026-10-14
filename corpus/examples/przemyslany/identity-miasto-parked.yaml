@@ -1,0 +1,22 @@
+hkf_version: "0.1"
+kind: IdentityAssertion
+id: identity:place:miasto-1899-act-412:przemyslany
+
+left_ref: entityref:przemyslany:1899:act-412:residence
+right_ref: entity:place:przemyslany
+
+decision: unresolved
+confidence: medium
+resolution_state: parked
+
+basis_claims:
+  - claim:przemyslany:1899:act-412:residence
+
+rationale: >
+  "Miasto" in Przemyślany birth registers usually means town-center residence,
+  but the pilot keeps the identity parked until place-name guidance is applied
+  by a human curator. Affirmative unresolved state — not silent merge.
+
+generated:
+  by: human:adammonago
+  at: "2026-08-11T10:30:00Z"

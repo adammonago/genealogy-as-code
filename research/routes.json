@@ -1,0 +1,314 @@
+{
+  "schema_version": "1.2",
+  "placeholders": [
+    "SURNAME",
+    "ANCESTOR",
+    "LOCATION",
+    "DATE",
+    "VAULT_PATH",
+    "GEDCOM_PATH"
+  ],
+  "reroute_conditions": {
+    "identity_collision": "Same-name, alias, spouse split, or household sorting problem",
+    "interactive_wall": "Correct source known but blocked by login, membership, or image-only access",
+    "narrow_browse": "Tight person + event + place + year; needs register browse plan",
+    "metric_plateau": "Prompt metric unchanged for two consecutive iterations",
+    "hebrew_headstone": "Hebrew or Yiddish tombstone inscription",
+    "source_conflict": "Two or more sources disagree on a fact",
+    "raw_documents": "Incoming scans or photos not yet classified or OCR'd"
+  },
+  "validator_recommended_after": [
+    "prompt:01-tree-expansion",
+    "prompt:03-findagrave-sweep",
+    "prompt:08-open-question-resolution",
+    "prompt:13-hebrew-headstone",
+    "workflow:new-ancestor-intake"
+  ],
+  "routes": [
+    {
+      "key": "workflow:getting-started",
+      "type": "workflow",
+      "source": "workflows/getting-started.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": null,
+      "follow_up": ["workflow:phase-planning", "workflow:document-triage"],
+      "reroute_triggers": []
+    },
+    {
+      "key": "workflow:ocr-pipeline",
+      "type": "workflow",
+      "source": "workflows/ocr-pipeline.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": null,
+      "follow_up": ["workflow:new-ancestor-intake"],
+      "reroute_triggers": [
+        { "condition": "hebrew_headstone", "route": "prompt:13-hebrew-headstone" },
+        { "condition": "interactive_wall", "route": "workflow:interactive-handoff" }
+      ]
+    },
+    {
+      "key": "workflow:new-ancestor-intake",
+      "type": "workflow",
+      "source": "workflows/new-ancestor-intake.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": null,
+      "follow_up": ["workflow:validator-pass", "prompt:02-cross-reference-audit", "prompt:05-source-citation-audit"],
+      "reroute_triggers": [
+        { "condition": "identity_collision", "route": "workflow:identity-bridge-resolution" }
+      ]
+    },
+    {
+      "key": "workflow:document-triage",
+      "type": "workflow",
+      "source": "workflows/document-triage.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": null,
+      "follow_up": ["workflow:ocr-pipeline"],
+      "reroute_triggers": [
+        { "condition": "hebrew_headstone", "route": "prompt:13-hebrew-headstone" },
+        { "condition": "raw_documents", "route": "workflow:ocr-pipeline" }
+      ]
+    },
+    {
+      "key": "workflow:oral-history-protocol",
+      "type": "workflow",
+      "source": "workflows/oral-history-protocol.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": null,
+      "follow_up": ["workflow:discrepancy-resolution", "prompt:08-open-question-resolution"],
+      "reroute_triggers": [
+        { "condition": "source_conflict", "route": "workflow:discrepancy-resolution" }
+      ]
+    },
+    {
+      "key": "workflow:discrepancy-resolution",
+      "type": "workflow",
+      "source": "workflows/discrepancy-resolution.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": null,
+      "follow_up": ["prompt:02-cross-reference-audit"],
+      "reroute_triggers": [
+        { "condition": "identity_collision", "route": "workflow:identity-bridge-resolution" }
+      ]
+    },
+    {
+      "key": "workflow:civil-record-browse-planning",
+      "type": "workflow",
+      "source": "workflows/civil-record-browse-planning.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": null,
+      "follow_up": ["prompt:08-open-question-resolution", "prompt:07-timeline-gap-analysis"],
+      "reroute_triggers": [
+        { "condition": "interactive_wall", "route": "workflow:interactive-handoff" }
+      ]
+    },
+    {
+      "key": "workflow:identity-bridge-resolution",
+      "type": "workflow",
+      "source": "workflows/identity-bridge-resolution.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": null,
+      "follow_up": ["workflow:civil-record-browse-planning", "prompt:08-open-question-resolution"],
+      "reroute_triggers": [
+        { "condition": "narrow_browse", "route": "workflow:civil-record-browse-planning" },
+        { "condition": "interactive_wall", "route": "workflow:interactive-handoff" }
+      ]
+    },
+    {
+      "key": "workflow:phase-planning",
+      "type": "workflow",
+      "source": "workflows/phase-planning.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": null,
+      "follow_up": ["prompt:01-tree-expansion", "prompt:08-open-question-resolution", "workflow:document-triage"],
+      "reroute_triggers": []
+    },
+    {
+      "key": "workflow:interactive-handoff",
+      "type": "workflow",
+      "source": "workflows/interactive-handoff.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": null,
+      "follow_up": [],
+      "reroute_triggers": []
+    },
+    {
+      "key": "workflow:validator-pass",
+      "type": "workflow",
+      "source": "workflows/validator-pass.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": null,
+      "follow_up": ["prompt:02-cross-reference-audit", "prompt:05-source-citation-audit", "workflow:discrepancy-resolution"],
+      "reroute_triggers": []
+    },
+    {
+      "key": "prompt:01-tree-expansion",
+      "type": "prompt",
+      "source": "prompts/01-tree-expansion.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": 8,
+      "follow_up": ["workflow:validator-pass", "prompt:02-cross-reference-audit", "prompt:05-source-citation-audit"],
+      "reroute_triggers": [
+        { "condition": "identity_collision", "route": "workflow:identity-bridge-resolution" },
+        { "condition": "narrow_browse", "route": "workflow:civil-record-browse-planning" },
+        { "condition": "interactive_wall", "route": "workflow:interactive-handoff" },
+        { "condition": "metric_plateau", "route": "workflow:phase-planning" }
+      ]
+    },
+    {
+      "key": "prompt:02-cross-reference-audit",
+      "type": "prompt",
+      "source": "prompts/02-cross-reference-audit.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": 12,
+      "follow_up": ["prompt:05-source-citation-audit"],
+      "reroute_triggers": [
+        { "condition": "identity_collision", "route": "workflow:identity-bridge-resolution" },
+        { "condition": "narrow_browse", "route": "workflow:civil-record-browse-planning" },
+        { "condition": "source_conflict", "route": "workflow:discrepancy-resolution" },
+        { "condition": "metric_plateau", "route": "workflow:phase-planning" }
+      ]
+    },
+    {
+      "key": "prompt:03-findagrave-sweep",
+      "type": "prompt",
+      "source": "prompts/03-findagrave-sweep.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": 15,
+      "follow_up": ["workflow:validator-pass", "prompt:05-source-citation-audit", "prompt:02-cross-reference-audit"],
+      "reroute_triggers": [
+        { "condition": "hebrew_headstone", "route": "prompt:13-hebrew-headstone" },
+        { "condition": "identity_collision", "route": "workflow:identity-bridge-resolution" },
+        { "condition": "metric_plateau", "route": "workflow:phase-planning" }
+      ]
+    },
+    {
+      "key": "prompt:04-gedcom-completeness",
+      "type": "prompt",
+      "source": "prompts/04-gedcom-completeness.md",
+      "required_inputs": ["VAULT_PATH", "GEDCOM_PATH"],
+      "default_iterations": 10,
+      "follow_up": ["prompt:02-cross-reference-audit"],
+      "reroute_triggers": [
+        { "condition": "source_conflict", "route": "workflow:discrepancy-resolution" },
+        { "condition": "identity_collision", "route": "workflow:identity-bridge-resolution" },
+        { "condition": "metric_plateau", "route": "workflow:phase-planning" }
+      ]
+    },
+    {
+      "key": "prompt:05-source-citation-audit",
+      "type": "prompt",
+      "source": "prompts/05-source-citation-audit.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": 8,
+      "follow_up": ["prompt:08-open-question-resolution"],
+      "reroute_triggers": [
+        { "condition": "interactive_wall", "route": "workflow:interactive-handoff" },
+        { "condition": "metric_plateau", "route": "workflow:phase-planning" }
+      ]
+    },
+    {
+      "key": "prompt:06-unresolved-persons",
+      "type": "prompt",
+      "source": "prompts/06-unresolved-persons.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": 10,
+      "follow_up": ["prompt:08-open-question-resolution"],
+      "reroute_triggers": [
+        { "condition": "identity_collision", "route": "workflow:identity-bridge-resolution" },
+        { "condition": "narrow_browse", "route": "workflow:civil-record-browse-planning" },
+        { "condition": "metric_plateau", "route": "workflow:phase-planning" }
+      ]
+    },
+    {
+      "key": "prompt:07-timeline-gap-analysis",
+      "type": "prompt",
+      "source": "prompts/07-timeline-gap-analysis.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": 8,
+      "follow_up": ["prompt:08-open-question-resolution"],
+      "reroute_triggers": [
+        { "condition": "narrow_browse", "route": "workflow:civil-record-browse-planning" },
+        { "condition": "interactive_wall", "route": "workflow:interactive-handoff" },
+        { "condition": "identity_collision", "route": "workflow:identity-bridge-resolution" },
+        { "condition": "metric_plateau", "route": "workflow:phase-planning" }
+      ]
+    },
+    {
+      "key": "prompt:08-open-question-resolution",
+      "type": "prompt",
+      "source": "prompts/08-open-question-resolution.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": 10,
+      "follow_up": ["workflow:validator-pass", "workflow:phase-planning"],
+      "reroute_triggers": [
+        { "condition": "identity_collision", "route": "workflow:identity-bridge-resolution" },
+        { "condition": "narrow_browse", "route": "workflow:civil-record-browse-planning" },
+        { "condition": "interactive_wall", "route": "workflow:interactive-handoff" },
+        { "condition": "metric_plateau", "route": "workflow:phase-planning" }
+      ]
+    },
+    {
+      "key": "prompt:09-bygdebok-extraction",
+      "type": "prompt",
+      "source": "prompts/09-bygdebok-extraction.md",
+      "required_inputs": ["VAULT_PATH", "LOCATION"],
+      "default_iterations": 12,
+      "follow_up": ["prompt:02-cross-reference-audit"],
+      "reroute_triggers": [
+        { "condition": "identity_collision", "route": "workflow:identity-bridge-resolution" },
+        { "condition": "interactive_wall", "route": "workflow:interactive-handoff" },
+        { "condition": "metric_plateau", "route": "workflow:phase-planning" }
+      ]
+    },
+    {
+      "key": "prompt:10-colonial-records-search",
+      "type": "prompt",
+      "source": "prompts/10-colonial-records-search.md",
+      "required_inputs": ["VAULT_PATH", "LOCATION", "DATE"],
+      "default_iterations": 10,
+      "follow_up": ["prompt:02-cross-reference-audit", "prompt:05-source-citation-audit"],
+      "reroute_triggers": [
+        { "condition": "identity_collision", "route": "workflow:identity-bridge-resolution" },
+        { "condition": "interactive_wall", "route": "workflow:interactive-handoff" },
+        { "condition": "metric_plateau", "route": "workflow:phase-planning" }
+      ]
+    },
+    {
+      "key": "prompt:11-immigration-search",
+      "type": "prompt",
+      "source": "prompts/11-immigration-search.md",
+      "required_inputs": ["VAULT_PATH", "ANCESTOR", "LOCATION", "DATE"],
+      "default_iterations": 10,
+      "follow_up": ["prompt:07-timeline-gap-analysis", "prompt:02-cross-reference-audit"],
+      "reroute_triggers": [
+        { "condition": "interactive_wall", "route": "workflow:interactive-handoff" },
+        { "condition": "narrow_browse", "route": "workflow:civil-record-browse-planning" },
+        { "condition": "metric_plateau", "route": "workflow:phase-planning" }
+      ]
+    },
+    {
+      "key": "prompt:12-dna-chromosome-analysis",
+      "type": "prompt",
+      "source": "prompts/12-dna-chromosome-analysis.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": 6,
+      "follow_up": ["prompt:08-open-question-resolution"],
+      "reroute_triggers": [
+        { "condition": "source_conflict", "route": "workflow:discrepancy-resolution" },
+        { "condition": "metric_plateau", "route": "workflow:phase-planning" }
+      ]
+    },
+    {
+      "key": "prompt:13-hebrew-headstone",
+      "type": "prompt",
+      "source": "prompts/13-hebrew-headstone.md",
+      "required_inputs": ["VAULT_PATH"],
+      "default_iterations": 2,
+      "follow_up": ["workflow:validator-pass", "prompt:02-cross-reference-audit", "workflow:discrepancy-resolution"],
+      "reroute_triggers": [
+        { "condition": "source_conflict", "route": "workflow:discrepancy-resolution" }
+      ]
+    }
+  ]
+}

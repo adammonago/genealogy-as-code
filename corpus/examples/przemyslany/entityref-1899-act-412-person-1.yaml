@@ -1,0 +1,17 @@
+hkf_version: "0.1"
+kind: EntityReference
+id: entityref:przemyslany:1899:act-412:person-1
+
+segment_ref: segment:przemyslany:1899:act-412
+entity_type: person
+
+mention: "[illegible given]; father surname partially illegible"
+
+resolution_state: parked
+resolution_note: >
+  Water damage on image 501 (Issue B-001). Intentionally parked pending
+  better imaging or independent household linkage.
+
+generated:
+  by: hkf-extractor/0.1.0
+  at: "2026-08-11T10:01:25Z"

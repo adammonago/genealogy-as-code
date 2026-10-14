@@ -1,0 +1,72 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://genealogy-as-code.local/hkf/schemas/entity-reference.schema.yaml
+title: HKF EntityReference
+description: >
+  A mention of an entity in evidence or extracted data. Separates what the
+  source says from what entity we think that text refers to.
+type: object
+additionalProperties: true
+required:
+  - hkf_version
+  - kind
+  - id
+  - entity_type
+  - resolution_state
+properties:
+  hkf_version:
+    type: string
+    const: "0.1"
+  kind:
+    type: string
+    const: EntityReference
+  id:
+    type: string
+    pattern: "^entityref:.+"
+  segment_ref:
+    type: string
+    pattern: "^segment:.+"
+  entity_type:
+    type: string
+    minLength: 1
+  mention:
+    type: string
+  normalized_label:
+    type: string
+  resolution_state:
+    type: string
+    enum: [unresolved, resolved, parked]
+  resolved_entity_ref:
+    type: string
+    pattern: "^entity:.+"
+  resolution_note:
+    type: string
+  authority_refs:
+    type: array
+    items:
+      type: object
+      additionalProperties: true
+      required: [scheme, id]
+      properties:
+        scheme: { type: string, minLength: 1 }
+        id: { type: ["string", "integer", "number"] }
+        resource: { type: string }
+  generated:
+    type: object
+    additionalProperties: true
+    properties:
+      by: { type: string }
+      at: { type: string }
+allOf:
+  - if:
+      properties:
+        resolution_state: { const: resolved }
+      required: [resolution_state]
+    then:
+      required: [resolved_entity_ref]
+  - if:
+      properties:
+        resolution_state: { const: parked }
+      required: [resolution_state]
+    then:
+      not:
+        required: [resolved_entity_ref]

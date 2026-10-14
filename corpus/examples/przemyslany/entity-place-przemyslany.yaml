@@ -1,0 +1,25 @@
+hkf_version: "0.1"
+kind: Entity
+id: entity:place:przemyslany
+
+entity_type: place
+preferred_label: Przemyślany
+
+names:
+  - value: Przemyślany
+    language: pl
+  - value: Перемишляни
+    language: uk
+  - value: Peremyshliany
+    language: en
+
+authority_refs:
+  - scheme: local-town-master
+    id: przemyslany
+    resource: /data/town-master.csv
+  - scheme: jri-town-id
+    id: przemyslany
+
+generated:
+  by: human:adammonago
+  at: "2026-08-11T10:15:00Z"

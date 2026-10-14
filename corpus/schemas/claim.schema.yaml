@@ -1,0 +1,91 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://genealogy-as-code.local/hkf/schemas/claim.schema.yaml
+title: HKF Claim
+description: >
+  A proposition supported by or extracted from evidence
+  (subject–predicate–object + evidence).
+type: object
+additionalProperties: true
+required:
+  - hkf_version
+  - kind
+  - id
+  - subject
+  - predicate
+  - object
+  - evidence
+  - generated
+properties:
+  hkf_version:
+    type: string
+    const: "0.1"
+  kind:
+    type: string
+    const: Claim
+  id:
+    type: string
+    pattern: "^claim:.+"
+  subject:
+    $ref: "#/$defs/term"
+  predicate:
+    type: string
+    minLength: 1
+    description: Namespaced descriptive string; unknown predicates MUST be tolerated.
+  object:
+    $ref: "#/$defs/term"
+  evidence:
+    type: array
+    minItems: 1
+    items:
+      $ref: evidence-locator.schema.yaml
+  extraction_ref:
+    type: string
+    pattern: "^extraction:.+"
+  extraction_state:
+    type: string
+    enum: [candidate, reviewed, rejected, superseded]
+  generated:
+    $ref: "#/$defs/generated"
+  verified:
+    $ref: "#/$defs/verified"
+$defs:
+  term:
+    type: object
+    additionalProperties: true
+    minProperties: 1
+    properties:
+      entity_ref:
+        type: string
+      literal:
+        type: object
+        additionalProperties: true
+        required: [value]
+        properties:
+          datatype: { type: string }
+          value: {}
+          original: { type: string }
+      temporal:
+        type: object
+        additionalProperties: true
+        properties:
+          original: { type: string }
+          earliest: { type: string }
+          latest: { type: string }
+          precision: { type: string }
+          qualifier: { type: string }
+  generated:
+    type: object
+    additionalProperties: true
+    required: [by]
+    properties:
+      by: { type: string, minLength: 1 }
+      at: { type: string }
+  verified:
+    type: array
+    items:
+      type: object
+      additionalProperties: true
+      required: [by]
+      properties:
+        by: { type: string, minLength: 1 }
+        at: { type: string }

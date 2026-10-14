@@ -1,0 +1,36 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://genealogy-as-code.local/hkf/schemas/evidence-locator.schema.yaml
+title: HKF EvidenceLocator
+description: >
+  Embedded structure identifying a precise location within a historical source.
+  Not required to be its own OKF concept.
+type: object
+additionalProperties: true
+required:
+  - source_ref
+  - selectors
+properties:
+  source_ref:
+    type: string
+    minLength: 1
+    description: Bundle path or HKF identifier for the containing source.
+  selectors:
+    type: object
+    minProperties: 1
+    additionalProperties:
+      type: ["string", "integer", "number", "boolean"]
+    description: Structured location within the source (page, act, image, etc.).
+  resource:
+    type: string
+    description: Exact external URL when available.
+  excerpt:
+    type: string
+    description: Short evidence excerpt.
+  content_hash:
+    type: string
+    description: Hash of immutable evidence representation (e.g. sha256:...).
+  accessed_at:
+    type: string
+    format: date-time
+  notes:
+    type: string

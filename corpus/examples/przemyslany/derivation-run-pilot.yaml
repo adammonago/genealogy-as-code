@@ -1,0 +1,35 @@
+hkf_version: "0.1"
+kind: DerivationRun
+id: run:przemyslany:births-pilot:2026-08-11T100000Z
+
+pipeline_ref: /corpus/pipelines/przemyslany-pilot.md
+
+run_state: succeeded
+
+started_at: "2026-08-11T10:00:00Z"
+completed_at: "2026-08-11T10:12:00Z"
+
+inputs:
+  - role: register-concept
+    resource: /przemyslany/registers/births-1877-1904.md
+  - role: schema
+    resource: /corpus/schemas/claim.schema.yaml
+
+software:
+  - actor: hkf-extractor/0.1.0
+    revision: abc123
+  - actor: process:hkf-pilot-import
+    revision: fixture-0.1
+
+parameters:
+  sample_acts: ["412"]
+  preserve_original_spelling: true
+  fictionalized: true
+
+outputs:
+  - role: fixture-dir
+    resource: /corpus/examples/przemyslany/
+
+generated:
+  by: process:hkf-pipeline-runner
+  at: "2026-08-11T10:12:00Z"

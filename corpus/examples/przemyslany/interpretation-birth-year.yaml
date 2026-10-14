@@ -1,0 +1,23 @@
+hkf_version: "0.1"
+kind: HistoricalInterpretation
+id: interpretation:przemyslany:1899:act-412:birth-year
+
+statement: >
+  Available pilot evidence currently supports a birth year of 1899 from the
+  birth register, while a contradictory approximate year near 1897 remains
+  unresolved. No silent collapse into a single value.
+
+about:
+  - entityref:przemyslany:1899:act-412:person-1
+
+supports:
+  - claim:przemyslany:1899:act-412:birth-year-a
+
+challenges:
+  - claim:przemyslany:example:death-record:birth-year-b
+
+interpretation_state: disputed
+
+generated:
+  by: human:adammonago
+  at: "2026-08-11T12:00:00Z"

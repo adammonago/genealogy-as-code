@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+
+# Community-corpus working files do not belong in this toolkit.
+# If recreated locally, keep them untracked: person/record dumps, schema dumps, userprofiles (PII).
+ingest_files/
+.analysis/
+tmp/
+
+# Research runtime local state
+.env.local
+dist/
+.obsidian/
+
+# Editor / tooling
+.idea/
+.vscode/
+*.swp
+*~
